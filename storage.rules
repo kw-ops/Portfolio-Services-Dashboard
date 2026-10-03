@@ -1,0 +1,49 @@
+rules_version = '2';
+
+// Portfolio Services Dashboard — Storage security rules.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function profile() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+    function hasProfile() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+    function isAdmin() { return hasProfile() && profile().role == 'admin'; }
+    function ownsProvider(providerId) {
+      return hasProfile() && profile().role == 'provider' && profile().providerId == providerId;
+    }
+    function isImage() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // PUBLIC: logo, cover, gallery and service images shown on portfolios.
+    match /portfolios/{providerId}/{allPaths=**} {
+      allow read: if true;
+      allow create, update: if (isAdmin() || ownsProvider(providerId)) && isImage();
+      allow delete: if isAdmin() || ownsProvider(providerId);
+    }
+
+    // Student photos before submit (anonymous session). Write-only; the
+    // submitRequest function moves them into requests/{requestId}/.
+    match /uploads/{uid}/{file} {
+      allow create: if request.auth != null && request.auth.uid == uid && isImage();
+      allow read, update, delete: if false;
+    }
+
+    // PRIVATE: photos attached to a request — that provider and admins only.
+    match /requests/{requestId}/{file} {
+      allow read: if isAdmin()
+        || ownsProvider(firestore.get(/databases/(default)/documents/serviceRequests/$(requestId)).data.providerId);
+      allow write: if false;
+    }
+
+    // PRIVATE: provider verification documents — admins only.
+    match /providers/{providerId}/documents/{file} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

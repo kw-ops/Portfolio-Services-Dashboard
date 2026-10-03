@@ -1,0 +1,53 @@
+rules_version = '2';
+
+// Portfolio Services Dashboard — Firestore security rules.
+// Roles live in users/{uid}.role: "admin" (PSD super admin) or "provider".
+// Students have no account; they only read public portfolios and submit
+// requests through the submitRequest Cloud Function.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function hasProfile() { return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)); }
+    function isAdmin() { return hasProfile() && profile().role == 'admin'; }
+    function ownsProvider(providerId) {
+      return hasProfile() && profile().role == 'provider' && profile().providerId == providerId;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if false; // managed by Cloud Functions / console
+    }
+
+    // config/admin locks the admin role to one uid (claimAdmin only);
+    // config/sync records the last Campus Stay sync (admin can read it).
+    match /config/{doc} {
+      allow read: if doc == 'sync' && isAdmin();
+      allow write: if false;
+    }
+
+    // Public link name -> provider id. Created by createPortfolio only.
+    match /slugs/{slug} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /providers/{providerId} {
+      // Anyone can view an active portfolio; suspended ones only by admin/owner.
+      allow read: if resource.data.status == 'active' || isAdmin() || ownsProvider(providerId);
+      // Created and kept up to date from Campus Stay by syncCampusStay.
+      // Admin and the owner may only change the PSD-only fields.
+      allow create, delete: if false;
+      allow update: if (isAdmin() || ownsProvider(providerId))
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['tagline', 'hours', 'email', 'logoUrl', 'coverUrl', 'gallery', 'services', 'updatedAt']);
+    }
+
+    // Contains students' phone numbers: only that provider and admins.
+    match /serviceRequests/{requestId} {
+      allow read: if isAdmin() || ownsProvider(resource.data.providerId);
+      allow write: if false; // submitRequest / updateRequestStatus functions
+    }
+  }
+}
