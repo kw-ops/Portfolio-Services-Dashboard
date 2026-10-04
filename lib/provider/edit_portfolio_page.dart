@@ -132,74 +132,113 @@ class _EditPortfolioPageState extends State<EditPortfolioPage> {
           body: SingleChildScrollView(
             child: Bounded(
               maxWidth: 760,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.link),
-                    title: const Text('Public link (never changes)'),
-                    subtitle: Text(portfolioUrl(p.slug, campusStay: false)),
-                  ),
-                ),
-                _section('From Campus Stay'),
-                _CampusStayDetails(p: p),
-                _section('Images'),
-                Wrap(spacing: 16, runSpacing: 16, children: [
-                  _imageBox('Logo', _logoUrl, 'logo', 110, 110,
-                      onPicked: (u) => setState(() => _logoUrl = u),
-                      onRemove: () => setState(() => _logoUrl = null)),
-                  _imageBox('Cover (defaults to the first Campus Stay photo)', _coverUrl, 'cover', 260, 110,
-                      onPicked: (u) => setState(() => _coverUrl = u),
-                      onRemove: () => setState(() => _coverUrl = null)),
-                ]),
-                _section('Extra details'),
-                TextFormField(
-                  controller: _tagline,
-                  decoration: const InputDecoration(
-                      labelText: 'Tagline', hintText: 'Fast, affordable laptop repairs on campus'),
-                  maxLength: 120,
-                ),
-                TextFormField(
-                  controller: _hours,
-                  decoration: const InputDecoration(labelText: 'Working hours', hintText: 'Mon–Sat, 8am–7pm'),
-                ),
-                gap,
-                TextFormField(
-                  controller: _email,
-                  decoration: const InputDecoration(labelText: 'Business email (shown publicly)'),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                _section('Services — prices & descriptions'),
-                if (_services.isEmpty)
-                  Text('No services listed in Campus Stay yet.', style: TextStyle(color: Colors.grey.shade600)),
-                for (var i = 0; i < _services.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Card(
-                      child: ListTile(
-                        title: Text(_services[i].name),
-                        subtitle: Text([
-                          if (_services[i].priceFrom != null) 'From GH₵${_services[i].priceFrom}',
-                          if (_services[i].description.isNotEmpty) _services[i].description,
-                        ].join(' · ').ifEmpty('Tap to add a price or description')),
-                        trailing: const Icon(Icons.edit_outlined),
-                        onTap: () => _editService(i),
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.link),
+                      title: const Text('Public link (never changes)'),
+                      subtitle: Text(portfolioUrl(p.slug, campusStay: false)),
                     ),
                   ),
-                _section('Extra gallery photos'),
-                Wrap(spacing: 8, runSpacing: 8, children: [
-                  for (var i = 0; i < _gallery.length; i++)
-                    Stack(children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: NetImage(_gallery[i], width: 110, height: 110),
+                  _section('From Campus Stay'),
+                  _CampusStayDetails(p: p),
+                  _section('Images'),
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: [
+                      _imageBox(
+                        'Logo',
+                        _logoUrl,
+                        'logo',
+                        110,
+                        110,
+                        onPicked: (u) => setState(() => _logoUrl = u),
+                        onRemove: () => setState(() => _logoUrl = null),
                       ),
-                      Positioned(right: 2, top: 2, child: _miniButton(Icons.close, () => setState(() => _gallery.removeAt(i)))),
-                    ]),
-                  _addBox('gallery', onPicked: (u) => setState(() => _gallery.add(u))),
-                ]),
-                const SizedBox(height: 40),
-              ]),
+                      _imageBox(
+                        'Cover (defaults to the first Campus Stay photo)',
+                        _coverUrl,
+                        'cover',
+                        260,
+                        110,
+                        onPicked: (u) => setState(() => _coverUrl = u),
+                        onRemove: () => setState(() => _coverUrl = null),
+                      ),
+                    ],
+                  ),
+                  _section('Extra details'),
+                  TextFormField(
+                    controller: _tagline,
+                    decoration: const InputDecoration(
+                      labelText: 'Tagline',
+                      hintText: 'Fast, affordable laptop repairs on campus',
+                    ),
+                    maxLength: 120,
+                  ),
+                  TextFormField(
+                    controller: _hours,
+                    decoration: const InputDecoration(
+                      labelText: 'Working hours',
+                      hintText: 'Mon–Sat, 8am–7pm',
+                    ),
+                  ),
+                  gap,
+                  TextFormField(
+                    controller: _email,
+                    decoration: const InputDecoration(labelText: 'Business email (shown publicly)'),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  _section('Services — prices & descriptions'),
+                  if (_services.isEmpty)
+                    Text(
+                      'No services listed in Campus Stay yet.',
+                      style: TextStyle(color: Colors.grey.shade600),
+                    ),
+                  for (var i = 0; i < _services.length; i++)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Card(
+                        child: ListTile(
+                          title: Text(_services[i].name),
+                          subtitle: Text(
+                            [
+                              if (_services[i].priceFrom != null) 'From GH₵${_services[i].priceFrom}',
+                              if (_services[i].description.isNotEmpty) _services[i].description,
+                            ].join(' · ').ifEmpty('Tap to add a price or description'),
+                          ),
+                          trailing: const Icon(Icons.edit_outlined),
+                          onTap: () => _editService(i),
+                        ),
+                      ),
+                    ),
+                  _section('Extra gallery photos'),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (var i = 0; i < _gallery.length; i++)
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: NetImage(_gallery[i], width: 110, height: 110),
+                            ),
+                            Positioned(
+                              right: 2,
+                              top: 2,
+                              child: _miniButton(Icons.close, () => setState(() => _gallery.removeAt(i))),
+                            ),
+                          ],
+                        ),
+                      _addBox('gallery', onPicked: (u) => setState(() => _gallery.add(u))),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         );
@@ -208,45 +247,67 @@ class _EditPortfolioPageState extends State<EditPortfolioPage> {
   }
 
   Widget _section(String t) => Padding(
-        padding: const EdgeInsets.only(top: 24, bottom: 12),
-        child: Text(t, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-      );
+    padding: const EdgeInsets.only(top: 24, bottom: 12),
+    child: Text(t, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+  );
 
-  Widget _imageBox(String label, String? url, String kind, double w, double h,
-      {required ValueChanged<String> onPicked, required VoidCallback onRemove}) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: Theme.of(context).textTheme.labelLarge),
-      const SizedBox(height: 6),
-      url == null
-          ? _addBox(kind, width: w, height: h, onPicked: onPicked)
-          : Stack(children: [
-              ClipRRect(borderRadius: BorderRadius.circular(8), child: NetImage(url, width: w, height: h)),
-              Positioned(
-                right: 2,
-                top: 2,
-                child: Row(children: [
-                  _miniButton(Icons.edit, () async {
-                    final u = await _pickAndUpload(kind);
-                    if (u != null) onPicked(u);
-                  }),
-                  const SizedBox(width: 4),
-                  _miniButton(Icons.close, onRemove),
-                ]),
+  Widget _imageBox(
+    String label,
+    String? url,
+    String kind,
+    double w,
+    double h, {
+    required ValueChanged<String> onPicked,
+    required VoidCallback onRemove,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 6),
+        url == null
+            ? _addBox(kind, width: w, height: h, onPicked: onPicked)
+            : Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: NetImage(url, width: w, height: h),
+                  ),
+                  Positioned(
+                    right: 2,
+                    top: 2,
+                    child: Row(
+                      children: [
+                        _miniButton(Icons.edit, () async {
+                          final u = await _pickAndUpload(kind);
+                          if (u != null) onPicked(u);
+                        }),
+                        const SizedBox(width: 4),
+                        _miniButton(Icons.close, onRemove),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ]),
-    ]);
+      ],
+    );
   }
 
   Widget _miniButton(IconData icon, VoidCallback onTap) => InkWell(
-        onTap: onTap,
-        child: CircleAvatar(
-          radius: 12,
-          backgroundColor: Colors.black54,
-          child: Icon(icon, size: 14, color: Colors.white),
-        ),
-      );
+    onTap: onTap,
+    child: CircleAvatar(
+      radius: 12,
+      backgroundColor: Colors.black54,
+      child: Icon(icon, size: 14, color: Colors.white),
+    ),
+  );
 
-  Widget _addBox(String kind, {double width = 110, double height = 110, required ValueChanged<String> onPicked}) {
+  Widget _addBox(
+    String kind, {
+    double width = 110,
+    double height = 110,
+    required ValueChanged<String> onPicked,
+  }) {
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: _uploading != null
@@ -285,32 +346,41 @@ class _CampusStayDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget row(String label, String value) => Padding(
-          padding: const EdgeInsets.only(bottom: 6),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(width: 100, child: Text(label, style: TextStyle(color: Colors.grey.shade600))),
-            Expanded(child: Text(value.isEmpty ? '—' : value)),
-          ]),
-        );
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(label, style: TextStyle(color: Colors.grey.shade600)),
+          ),
+          Expanded(child: Text(value.isEmpty ? '—' : value)),
+        ],
+      ),
+    );
     return Card(
       color: const Color(0xFFF5F3FF),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          row('Name', p.name),
-          row('Category', p.category),
-          row('Location', p.location),
-          row('Phone', p.phone),
-          row('WhatsApp', p.whatsapp),
-          row('Services', p.services.map((s) => s.name).join(', ')),
-          row('Photos', '${p.csPhotos.length}'),
-          row('About', p.description),
-          const SizedBox(height: 8),
-          Text(
-            'These come from Campus Stay. To change them, edit the service in Campus Stay admin → Services. '
-            'PSD picks up changes within 30 minutes${p.syncedAt == null ? '' : ' (last synced ${formatDateTime(p.syncedAt)})'}.',
-            style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
-          ),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            row('Name', p.name),
+            row('Category', p.category),
+            row('Location', p.location),
+            row('Phone', p.phone),
+            row('WhatsApp', p.whatsapp),
+            row('Services', p.services.map((s) => s.name).join(', ')),
+            row('Photos', '${p.csPhotos.length}'),
+            row('About', p.description),
+            const SizedBox(height: 8),
+            Text(
+              'These come from Campus Stay. To change them, edit the service in Campus Stay admin → Services. '
+              'PSD picks up changes within 30 minutes${p.syncedAt == null ? '' : ' (last synced ${formatDateTime(p.syncedAt)})'}.',
+              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -339,46 +409,49 @@ class _ServiceDialogState extends State<_ServiceDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: Text(widget.service.name),
-        content: SizedBox(
-          width: 400,
-          child: Form(
-            key: _form,
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              TextFormField(
-                controller: _desc,
-                autofocus: true,
-                decoration: const InputDecoration(labelText: 'Short description (optional)'),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _price,
-                decoration: const InputDecoration(labelText: 'Starting price in GH₵ (optional)'),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                validator: (v) =>
-                    (v ?? '').trim().isEmpty || num.tryParse(v!.trim()) != null ? null : 'Enter a number',
-              ),
-            ]),
-          ),
+    title: Text(widget.service.name),
+    content: SizedBox(
+      width: 400,
+      child: Form(
+        key: _form,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _desc,
+              autofocus: true,
+              decoration: const InputDecoration(labelText: 'Short description (optional)'),
+              maxLines: 2,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _price,
+              decoration: const InputDecoration(labelText: 'Starting price in GH₵ (optional)'),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              validator: (v) =>
+                  (v ?? '').trim().isEmpty || num.tryParse(v!.trim()) != null ? null : 'Enter a number',
+            ),
+          ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              if (!_form.currentState!.validate()) return;
-              Navigator.pop(
-                context,
-                ServiceItem(
-                  id: widget.service.id,
-                  name: widget.service.name,
-                  description: _desc.text.trim(),
-                  priceFrom: num.tryParse(_price.text.trim()),
-                ),
-              );
-            },
-            child: const Text('Done'),
-          ),
-        ],
-      );
+      ),
+    ),
+    actions: [
+      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+      FilledButton(
+        onPressed: () {
+          if (!_form.currentState!.validate()) return;
+          Navigator.pop(
+            context,
+            ServiceItem(
+              id: widget.service.id,
+              name: widget.service.name,
+              description: _desc.text.trim(),
+              priceFrom: num.tryParse(_price.text.trim()),
+            ),
+          );
+        },
+        child: const Text('Done'),
+      ),
+    ],
+  );
 }

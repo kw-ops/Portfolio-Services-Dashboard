@@ -29,36 +29,36 @@ const List<String> kStatusOrder = [
 ];
 
 String statusLabel(String s) => switch (s) {
-      'pending' => 'New',
-      'accepted' => 'Accepted',
-      'scheduled' => 'Scheduled',
-      'in_progress' => 'In progress',
-      'completed' => 'Completed',
-      'rejected' => 'Rejected',
-      'cancelled' => 'Cancelled',
-      _ => s,
-    };
+  'pending' => 'New',
+  'accepted' => 'Accepted',
+  'scheduled' => 'Scheduled',
+  'in_progress' => 'In progress',
+  'completed' => 'Completed',
+  'rejected' => 'Rejected',
+  'cancelled' => 'Cancelled',
+  _ => s,
+};
 
 String statusActionLabel(String s) => switch (s) {
-      'accepted' => 'Accept',
-      'rejected' => 'Reject',
-      'scheduled' => 'Mark scheduled',
-      'in_progress' => 'Start work',
-      'completed' => 'Mark completed',
-      'cancelled' => 'Cancel',
-      _ => statusLabel(s),
-    };
+  'accepted' => 'Accept',
+  'rejected' => 'Reject',
+  'scheduled' => 'Mark scheduled',
+  'in_progress' => 'Start work',
+  'completed' => 'Mark completed',
+  'cancelled' => 'Cancel',
+  _ => statusLabel(s),
+};
 
 Color statusColor(String s) => switch (s) {
-      'pending' => const Color(0xFFF59E0B),
-      'accepted' => const Color(0xFF3B82F6),
-      'scheduled' => const Color(0xFF8B5CF6),
-      'in_progress' => const Color(0xFF0EA5E9),
-      'completed' => const Color(0xFF10B981),
-      'rejected' => const Color(0xFFEF4444),
-      'cancelled' => const Color(0xFF6B7280),
-      _ => Colors.grey,
-    };
+  'pending' => const Color(0xFFF59E0B),
+  'accepted' => const Color(0xFF3B82F6),
+  'scheduled' => const Color(0xFF8B5CF6),
+  'in_progress' => const Color(0xFF0EA5E9),
+  'completed' => const Color(0xFF10B981),
+  'rejected' => const Color(0xFFEF4444),
+  'cancelled' => const Color(0xFF6B7280),
+  _ => Colors.grey,
+};
 
 String sourceLabel(String s) => s == kSourceCampusStay ? 'Campus Stay Ghana' : 'Direct link';
 

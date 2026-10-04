@@ -26,10 +26,8 @@ final router = GoRouter(
     GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
     GoRoute(
       path: '/p/:slug',
-      builder: (_, s) => PortfolioPage(
-        slug: s.pathParameters['slug']!,
-        source: s.uri.queryParameters['source'],
-      ),
+      builder: (_, s) =>
+          PortfolioPage(slug: s.pathParameters['slug']!, source: s.uri.queryParameters['source']),
       routes: [
         GoRoute(
           path: 'request',
@@ -101,10 +99,13 @@ final router = GoRouter(
   ],
   errorBuilder: (context, state) => Scaffold(
     body: Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text('Page not found'),
-        TextButton(onPressed: () => context.go('/'), child: const Text('Home')),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Page not found'),
+          TextButton(onPressed: () => context.go('/'), child: const Text('Home')),
+        ],
+      ),
     ),
   ),
 );

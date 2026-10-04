@@ -38,10 +38,8 @@ class Api {
     }
   }
 
-  static Stream<Portfolio?> watchPortfolio(String id) => _providers
-      .doc(id)
-      .snapshots()
-      .map((d) => d.exists ? Portfolio.fromDoc(d) : null);
+  static Stream<Portfolio?> watchPortfolio(String id) =>
+      _providers.doc(id).snapshots().map((d) => d.exists ? Portfolio.fromDoc(d) : null);
 
   static Stream<List<Portfolio>> watchAllPortfolios() => _providers
       .orderBy('createdAt', descending: true)
@@ -55,8 +53,7 @@ class Api {
   static Future<String> uploadPortfolioImage(String providerId, XFile file, String kind) async {
     final bytes = await file.readAsBytes();
     final ext = _ext(file.name);
-    final ref = _storage
-        .ref('portfolios/$providerId/$kind/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    final ref = _storage.ref('portfolios/$providerId/$kind/${DateTime.now().millisecondsSinceEpoch}.$ext');
     await ref.putData(bytes, SettableMetadata(contentType: _contentType(file, ext)));
     return ref.getDownloadURL();
   }
@@ -71,10 +68,8 @@ class Api {
   }
 
   /// Admin only: when the last Campus Stay sync finished.
-  static Stream<DateTime?> watchLastSync() => _db
-      .doc('config/sync')
-      .snapshots()
-      .map((d) => (d.data()?['lastSyncedAt'] as Timestamp?)?.toDate());
+  static Stream<DateTime?> watchLastSync() =>
+      _db.doc('config/sync').snapshots().map((d) => (d.data()?['lastSyncedAt'] as Timestamp?)?.toDate());
 
   /// Makes the signed-in Google account the admin if it is the allowed
   /// ADMIN_EMAIL and no admin exists yet (or it already is the admin).
@@ -99,10 +94,7 @@ class Api {
 
   /// Admin only: login emails linked to a provider.
   static Future<List<String>> providerAccountEmails(String providerId) async {
-    final q = await _db
-        .collection('users')
-        .where('providerId', isEqualTo: providerId)
-        .get();
+    final q = await _db.collection('users').where('providerId', isEqualTo: providerId).get();
     return q.docs.map((d) => d.data()['email'] as String? ?? d.id).toList();
   }
 
@@ -121,17 +113,12 @@ class Api {
       .snapshots()
       .map((q) => q.docs.map(ServiceRequest.fromDoc).toList());
 
-  static Stream<ServiceRequest?> watchRequest(String id) => _requests
-      .doc(id)
-      .snapshots()
-      .map((d) => d.exists ? ServiceRequest.fromDoc(d) : null);
+  static Stream<ServiceRequest?> watchRequest(String id) =>
+      _requests.doc(id).snapshots().map((d) => d.exists ? ServiceRequest.fromDoc(d) : null);
 
-  static Future<void> updateRequestStatus(String requestId, String status, {String note = ''}) =>
-      _functions.httpsCallable('updateRequestStatus').call({
-        'requestId': requestId,
-        'status': status,
-        'note': note,
-      });
+  static Future<void> updateRequestStatus(String requestId, String status, {String note = ''}) => _functions
+      .httpsCallable('updateRequestStatus')
+      .call({'requestId': requestId, 'status': status, 'note': note});
 
   /// Students don't have accounts; an anonymous session lets them upload
   /// photos and call `submitRequest` without exposing anything else.
@@ -183,8 +170,7 @@ class Api {
 
   // --------------------------------------------------------------------- stats
 
-  static Future<int> count(Query<Map<String, dynamic>> q) async =>
-      (await q.count().get()).count ?? 0;
+  static Future<int> count(Query<Map<String, dynamic>> q) async => (await q.count().get()).count ?? 0;
 
   static Query<Map<String, dynamic>> get allProvidersQuery => _providers;
   static Query<Map<String, dynamic>> get allRequestsQuery => _requests;
@@ -197,7 +183,12 @@ class Api {
   }
 
   static String _contentType(XFile f, String ext) =>
-      f.mimeType ?? (ext == 'png' ? 'image/png' : ext == 'webp' ? 'image/webp' : 'image/jpeg');
+      f.mimeType ??
+      (ext == 'png'
+          ? 'image/png'
+          : ext == 'webp'
+          ? 'image/webp'
+          : 'image/jpeg');
 }
 
 /// Turns Firebase/Functions errors into a message a person can act on.

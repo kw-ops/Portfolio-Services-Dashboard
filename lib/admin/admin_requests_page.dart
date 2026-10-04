@@ -28,8 +28,8 @@ class _AdminRequestsPageState extends State<AdminRequestsPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go(
-              widget.providerId == null ? '/admin' : '/admin/providers/${widget.providerId}'),
+          onPressed: () =>
+              context.go(widget.providerId == null ? '/admin' : '/admin/providers/${widget.providerId}'),
         ),
         title: const Text('Service requests'),
         actions: accountActions(context),
@@ -41,30 +41,41 @@ class _AdminRequestsPageState extends State<AdminRequestsPage> {
           if (!snap.hasData) return const Center(child: CircularProgressIndicator());
           final all = snap.data!;
           final shown = all.where(_filter.matches).toList();
-          return ListView(children: [
-            Bounded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                if (widget.providerId != null && all.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(all.first.providerName, style: Theme.of(context).textTheme.titleLarge),
-                  ),
-                RequestFilterBar(value: _filter, requests: all, onChanged: (f) => setState(() => _filter = f)),
-                const SizedBox(height: 12),
-                if (shown.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Center(child: Text('No requests.', style: TextStyle(color: Colors.grey.shade600))),
-                  ),
-                for (final r in shown)
-                  RequestTile(
-                    request: r,
-                    showProvider: widget.providerId == null,
-                    onTap: () => context.go('/admin/requests/${r.id}'),
-                  ),
-              ]),
-            ),
-          ]);
+          return ListView(
+            children: [
+              Bounded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.providerId != null && all.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(all.first.providerName, style: Theme.of(context).textTheme.titleLarge),
+                      ),
+                    RequestFilterBar(
+                      value: _filter,
+                      requests: all,
+                      onChanged: (f) => setState(() => _filter = f),
+                    ),
+                    const SizedBox(height: 12),
+                    if (shown.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 40),
+                        child: Center(
+                          child: Text('No requests.', style: TextStyle(color: Colors.grey.shade600)),
+                        ),
+                      ),
+                    for (final r in shown)
+                      RequestTile(
+                        request: r,
+                        showProvider: widget.providerId == null,
+                        onTap: () => context.go('/admin/requests/${r.id}'),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          );
         },
       ),
     );

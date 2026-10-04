@@ -72,18 +72,21 @@ class Session extends ChangeNotifier {
     }
     _loaded = false;
     notifyListeners();
-    _profileSub = FirebaseFirestore.instance.doc('users/${u.uid}').snapshots().listen(
-      (d) {
-        profile = d.exists ? AppUser.fromDoc(d) : null;
-        _loaded = true;
-        notifyListeners();
-      },
-      onError: (_) {
-        profile = null;
-        _loaded = true;
-        notifyListeners();
-      },
-    );
+    _profileSub = FirebaseFirestore.instance
+        .doc('users/${u.uid}')
+        .snapshots()
+        .listen(
+          (d) {
+            profile = d.exists ? AppUser.fromDoc(d) : null;
+            _loaded = true;
+            notifyListeners();
+          },
+          onError: (_) {
+            profile = null;
+            _loaded = true;
+            notifyListeners();
+          },
+        );
   }
 
   Future<void> signIn(String email, String password) =>

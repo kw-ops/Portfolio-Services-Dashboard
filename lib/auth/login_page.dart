@@ -96,65 +96,77 @@ class _LoginPageState extends State<LoginPage> {
                 child: Form(
                   key: _form,
                   child: AutofillGroup(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                      Icon(Icons.storefront, size: 40, color: Theme.of(context).colorScheme.primary),
-                      const SizedBox(height: 12),
-                      Text('Portfolio Services Dashboard',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleLarge),
-                      const SizedBox(height: 4),
-                      Text('Sign in to manage your service requests',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey.shade600)),
-                      const SizedBox(height: 24),
-                      OutlinedButton.icon(
-                        onPressed: busy ? null : session.signInWithGoogle,
-                        icon: const Icon(Icons.admin_panel_settings_outlined),
-                        label: const Text('Admin: continue with Google'),
-                        style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text('Service providers', style: TextStyle(color: Colors.grey.shade600)),
-                        ),
-                        const Expanded(child: Divider()),
-                      ]),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _email,
-                        decoration: const InputDecoration(labelText: 'Email'),
-                        keyboardType: TextInputType.emailAddress,
-                        autofillHints: const [AutofillHints.email],
-                        validator: (v) => (v ?? '').contains('@') ? null : 'Enter your email',
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _password,
-                        decoration: const InputDecoration(labelText: 'Password'),
-                        obscureText: true,
-                        autofillHints: const [AutofillHints.password],
-                        onFieldSubmitted: (_) => _submit(),
-                        validator: (v) => (v ?? '').isEmpty ? 'Enter your password' : null,
-                      ),
-                      if (error != null) ...[
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Icon(Icons.storefront, size: 40, color: Theme.of(context).colorScheme.primary),
                         const SizedBox(height: 12),
-                        Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                        Text(
+                          'Portfolio Services Dashboard',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Sign in to manage your service requests',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                        const SizedBox(height: 24),
+                        OutlinedButton.icon(
+                          onPressed: busy ? null : session.signInWithGoogle,
+                          icon: const Icon(Icons.admin_panel_settings_outlined),
+                          label: const Text('Admin: continue with Google'),
+                          style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            const Expanded(child: Divider()),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text('Service providers', style: TextStyle(color: Colors.grey.shade600)),
+                            ),
+                            const Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _email,
+                          decoration: const InputDecoration(labelText: 'Email'),
+                          keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [AutofillHints.email],
+                          validator: (v) => (v ?? '').contains('@') ? null : 'Enter your email',
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _password,
+                          decoration: const InputDecoration(labelText: 'Password'),
+                          obscureText: true,
+                          autofillHints: const [AutofillHints.password],
+                          onFieldSubmitted: (_) => _submit(),
+                          validator: (v) => (v ?? '').isEmpty ? 'Enter your password' : null,
+                        ),
+                        if (error != null) ...[
+                          const SizedBox(height: 12),
+                          Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                        ],
+                        const SizedBox(height: 20),
+                        FilledButton(
+                          onPressed: busy ? null : _submit,
+                          child: busy
+                              ? const SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Text('Sign in'),
+                        ),
+                        TextButton(onPressed: _reset, child: const Text('Forgot password')),
+                        if (session.signedIn && session.ready && session.profile == null)
+                          TextButton(onPressed: session.signOut, child: const Text('Sign out')),
                       ],
-                      const SizedBox(height: 20),
-                      FilledButton(
-                        onPressed: busy ? null : _submit,
-                        child: busy
-                            ? const SizedBox(
-                                height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                            : const Text('Sign in'),
-                      ),
-                      TextButton(onPressed: _reset, child: const Text('Forgot password')),
-                      if (session.signedIn && session.ready && session.profile == null)
-                        TextButton(onPressed: session.signOut, child: const Text('Sign out')),
-                    ]),
+                    ),
                   ),
                 ),
               ),

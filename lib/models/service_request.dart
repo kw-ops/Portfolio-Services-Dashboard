@@ -8,10 +8,10 @@ class StatusChange {
   const StatusChange({required this.status, this.at, this.note = ''});
 
   factory StatusChange.fromMap(Map<String, dynamic> m) => StatusChange(
-        status: m['status'] as String? ?? '',
-        at: (m['at'] as Timestamp?)?.toDate(),
-        note: m['note'] as String? ?? '',
-      );
+    status: m['status'] as String? ?? '',
+    at: (m['at'] as Timestamp?)?.toDate(),
+    note: m['note'] as String? ?? '',
+  );
 }
 
 /// A student's request to a provider (`serviceRequests/{id}`).

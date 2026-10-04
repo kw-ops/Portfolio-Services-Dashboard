@@ -30,8 +30,11 @@ class ProviderDetailPage extends StatelessWidget {
               ? Center(
                   child: snap.connectionState == ConnectionState.waiting
                       ? const CircularProgressIndicator()
-                      : const Text('Provider not found.'))
-              : SingleChildScrollView(child: Bounded(maxWidth: 760, child: _Body(p: p))),
+                      : const Text('Provider not found.'),
+                )
+              : SingleChildScrollView(
+                  child: Bounded(maxWidth: 760, child: _Body(p: p)),
+                ),
         );
       },
     );
@@ -46,74 +49,92 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final link = portfolioUrl(p.slug);
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Card(
-        color: const Color(0xFFF5F3FF),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Row(children: [
-              Icon(Icons.link, color: Color(0xFF7C3AED)),
-              SizedBox(width: 8),
-              Text('Campus Stay link', style: TextStyle(fontWeight: FontWeight.bold)),
-            ]),
-            const SizedBox(height: 8),
-            const Text('Paste this into Campus Stay admin → Services → this service → Service URL.'),
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-              child: SelectableText(link, style: const TextStyle(fontFamily: 'monospace')),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Card(
+          color: const Color(0xFFF5F3FF),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.link, color: Color(0xFF7C3AED)),
+                    SizedBox(width: 8),
+                    Text('Campus Stay link', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text('Paste this into Campus Stay admin → Services → this service → Service URL.'),
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+                  child: SelectableText(link, style: const TextStyle(fontFamily: 'monospace')),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: () => copyText(context, link, label: 'Link copied'),
+                      icon: const Icon(Icons.copy),
+                      label: const Text('Copy link'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => launchUrl(Uri.parse(link)),
+                      icon: const Icon(Icons.open_in_new),
+                      label: const Text('Open portfolio'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              FilledButton.icon(
-                onPressed: () => copyText(context, link, label: 'Link copied'),
-                icon: const Icon(Icons.copy),
-                label: const Text('Copy link'),
-              ),
-              OutlinedButton.icon(
-                onPressed: () => launchUrl(Uri.parse(link)),
-                icon: const Icon(Icons.open_in_new),
-                label: const Text('Open portfolio'),
-              ),
-            ]),
-          ]),
+          ),
         ),
-      ),
-      const SizedBox(height: 12),
-      Card(
-        child: Column(children: [
-          ListTile(
-            leading: const Icon(Icons.edit_outlined),
-            title: const Text('Edit portfolio'),
-            subtitle: const Text('Logo, cover, tagline, hours, prices, extra photos'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.go('/admin/providers/${p.id}/edit'),
+        const SizedBox(height: 12),
+        Card(
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit_outlined),
+                title: const Text('Edit portfolio'),
+                subtitle: const Text('Logo, cover, tagline, hours, prices, extra photos'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.go('/admin/providers/${p.id}/edit'),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.inbox_outlined),
+                title: const Text('Requests'),
+                subtitle: Text('${p.requestCounter} received so far'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.go('/admin/requests?provider=${p.id}'),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: Icon(
+                  p.isActive ? Icons.check_circle_outline : Icons.pause_circle_outline,
+                  color: p.isActive ? Colors.green : Colors.orange,
+                ),
+                title: Text(
+                  p.isActive
+                      ? 'Active — visible to students'
+                      : 'Hidden — ${p.status == 'removed' ? 'deleted' : 'hidden'} in Campus Stay',
+                ),
+                subtitle: Text(p.category),
+              ),
+            ],
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.inbox_outlined),
-            title: const Text('Requests'),
-            subtitle: Text('${p.requestCounter} received so far'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.go('/admin/requests?provider=${p.id}'),
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: Icon(p.isActive ? Icons.check_circle_outline : Icons.pause_circle_outline,
-                color: p.isActive ? Colors.green : Colors.orange),
-            title: Text(p.isActive
-                ? 'Active — visible to students'
-                : 'Hidden — ${p.status == 'removed' ? 'deleted' : 'hidden'} in Campus Stay'),
-            subtitle: Text(p.category),
-          ),
-        ]),
-      ),
-      const SizedBox(height: 12),
-      _AccountCard(p: p),
-    ]);
+        ),
+        const SizedBox(height: 12),
+        _AccountCard(p: p),
+      ],
+    );
   }
 }
 
@@ -152,9 +173,7 @@ class _AccountCardState extends State<_AccountCard> {
       );
       if (!mounted) return;
       final dashboard = '${Uri.base.origin}${Uri.base.path}#/login';
-      final password = existed
-          ? '(their existing password — unchanged)'
-          : _password.text;
+      final password = existed ? '(their existing password — unchanged)' : _password.text;
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -168,8 +187,10 @@ class _AccountCardState extends State<_AccountCard> {
           ),
           actions: [
             TextButton(
-              onPressed: () => copyText(ctx,
-                  'Your Campus Stay Services dashboard\n$dashboard\nEmail: ${_email.text.trim()}\nPassword: $password'),
+              onPressed: () => copyText(
+                ctx,
+                'Your Campus Stay Services dashboard\n$dashboard\nEmail: ${_email.text.trim()}\nPassword: $password',
+              ),
               child: const Text('Copy'),
             ),
             FilledButton(onPressed: () => Navigator.pop(ctx), child: const Text('Done')),
@@ -191,58 +212,86 @@ class _AccountCardState extends State<_AccountCard> {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Provider dashboard login', style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          FutureBuilder<List<String>>(
-            future: _emails,
-            builder: (context, snap) {
-              if (!snap.hasData) return const LinearProgressIndicator();
-              if (snap.data!.isEmpty) {
-                return Text('No login yet — the provider cannot see requests until you create one.',
-                    style: TextStyle(color: Colors.orange.shade800));
-              }
-              return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                for (final e in snap.data!)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(children: [
-                      const Icon(Icons.person_outline, size: 18),
-                      const SizedBox(width: 6),
-                      Text(e),
-                    ]),
-                  ),
-              ]);
-            },
-          ),
-          const SizedBox(height: 16),
-          Form(
-            key: _form,
-            child: Wrap(spacing: 12, runSpacing: 12, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              SizedBox(
-                width: 260,
-                child: TextFormField(
-                  controller: _email,
-                  decoration: const InputDecoration(labelText: 'Provider email', isDense: true),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (v) => (v ?? '').contains('@') ? null : 'Enter an email',
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Provider dashboard login', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            FutureBuilder<List<String>>(
+              future: _emails,
+              builder: (context, snap) {
+                if (!snap.hasData) return const LinearProgressIndicator();
+                if (snap.data!.isEmpty) {
+                  return Text(
+                    'No login yet — the provider cannot see requests until you create one.',
+                    style: TextStyle(color: Colors.orange.shade800),
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final e in snap.data!)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.person_outline, size: 18),
+                            const SizedBox(width: 6),
+                            Text(e),
+                          ],
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Form(
+              key: _form,
+              child: LayoutBuilder(
+                builder: (context, c) {
+                  final email = TextFormField(
+                    controller: _email,
+                    decoration: const InputDecoration(labelText: 'Provider email', isDense: true),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (v) => (v ?? '').contains('@') ? null : 'Enter an email',
+                  );
+                  final password = TextFormField(
+                    controller: _password,
+                    decoration: const InputDecoration(labelText: 'Temporary password', isDense: true),
+                    validator: (v) => (v ?? '').length < 8 ? 'At least 8 characters' : null,
+                  );
+                  final button = FilledButton(
+                    onPressed: _busy ? null : _create,
+                    child: Text(_busy ? 'Creating…' : 'Create login'),
+                  );
+                  if (c.maxWidth < 560) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        email,
+                        const SizedBox(height: 12),
+                        password,
+                        const SizedBox(height: 12),
+                        button,
+                      ],
+                    );
+                  }
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 3, child: email),
+                      const SizedBox(width: 12),
+                      Expanded(flex: 2, child: password),
+                      const SizedBox(width: 12),
+                      button,
+                    ],
+                  );
+                },
               ),
-              SizedBox(
-                width: 200,
-                child: TextFormField(
-                  controller: _password,
-                  decoration: const InputDecoration(labelText: 'Temporary password', isDense: true),
-                  validator: (v) => (v ?? '').length < 8 ? 'At least 8 characters' : null,
-                ),
-              ),
-              FilledButton(
-                onPressed: _busy ? null : _create,
-                child: Text(_busy ? 'Creating…' : 'Create login'),
-              ),
-            ]),
-          ),
-        ]),
+            ),
+          ],
+        ),
       ),
     );
   }

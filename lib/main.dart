@@ -18,9 +18,9 @@ class PsdApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        title: 'Campus Stay Services',
-        debugShowCheckedModeBanner: false,
-        theme: buildTheme(),
-        routerConfig: router,
-      );
+    title: 'Campus Stay Services',
+    debugShowCheckedModeBanner: false,
+    theme: buildTheme(),
+    routerConfig: router,
+  );
 }

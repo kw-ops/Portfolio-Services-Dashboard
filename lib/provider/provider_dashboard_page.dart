@@ -59,72 +59,81 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
               int n(List<String> s) => all.where((r) => s.contains(r.status)).length;
               final shown = all.where(_filter.matches).toList();
 
-              return ListView(children: [
-                Bounded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    if (p != null && !p.isActive)
-                      const Card(
-                        color: Color(0xFFFFF7ED),
-                        child: ListTile(
-                          leading: Icon(Icons.pause_circle_outline, color: Colors.orange),
-                          title: Text('Your portfolio is currently hidden from students.'),
-                          subtitle: Text('It is hidden in Campus Stay. Contact the Campus Stay services admin.'),
-                        ),
-                      ),
-                    const SizedBox(height: 4),
-                    Wrap(spacing: 12, runSpacing: 12, children: [
-                      StatTile(
-                        label: 'New requests',
-                        value: '${n(['pending'])}',
-                        color: statusColor('pending'),
-                        onTap: () => setState(() => _filter = RequestFilter.newOnes),
-                      ),
-                      StatTile(
-                        label: 'Accepted',
-                        value: '${n(['accepted', 'scheduled'])}',
-                        color: statusColor('accepted'),
-                        onTap: () => setState(() => _filter = RequestFilter.accepted),
-                      ),
-                      StatTile(
-                        label: 'In progress',
-                        value: '${n(['in_progress'])}',
-                        color: statusColor('in_progress'),
-                        onTap: () => setState(() => _filter = RequestFilter.inProgress),
-                      ),
-                      StatTile(
-                        label: 'Completed',
-                        value: '${n(['completed'])}',
-                        color: statusColor('completed'),
-                        onTap: () => setState(() => _filter = RequestFilter.completed),
-                      ),
-                    ]),
-                    const SizedBox(height: 24),
-                    Text('Requests', style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 10),
-                    RequestFilterBar(
-                      value: _filter,
-                      requests: all,
-                      onChanged: (f) => setState(() => _filter = f),
-                    ),
-                    const SizedBox(height: 12),
-                    if (shown.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Center(
-                          child: Text(
-                            all.isEmpty
-                                ? 'No requests yet. They will appear here the moment a student sends one.'
-                                : 'Nothing in this list.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey.shade600),
+              return ListView(
+                children: [
+                  Bounded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (p != null && !p.isActive)
+                          const Card(
+                            color: Color(0xFFFFF7ED),
+                            child: ListTile(
+                              leading: Icon(Icons.pause_circle_outline, color: Colors.orange),
+                              title: Text('Your portfolio is currently hidden from students.'),
+                              subtitle: Text(
+                                'It is hidden in Campus Stay. Contact the Campus Stay services admin.',
+                              ),
+                            ),
                           ),
+                        const SizedBox(height: 4),
+                        StatGrid(
+                          children: [
+                            StatTile(
+                              label: 'New requests',
+                              value: '${n(['pending'])}',
+                              color: statusColor('pending'),
+                              onTap: () => setState(() => _filter = RequestFilter.newOnes),
+                            ),
+                            StatTile(
+                              label: 'Accepted',
+                              value: '${n(['accepted', 'scheduled'])}',
+                              color: statusColor('accepted'),
+                              onTap: () => setState(() => _filter = RequestFilter.accepted),
+                            ),
+                            StatTile(
+                              label: 'In progress',
+                              value: '${n(['in_progress'])}',
+                              color: statusColor('in_progress'),
+                              onTap: () => setState(() => _filter = RequestFilter.inProgress),
+                            ),
+                            StatTile(
+                              label: 'Completed',
+                              value: '${n(['completed'])}',
+                              color: statusColor('completed'),
+                              onTap: () => setState(() => _filter = RequestFilter.completed),
+                            ),
+                          ],
                         ),
-                      ),
-                    for (final r in shown)
-                      RequestTile(request: r, onTap: () => context.go('/dashboard/requests/${r.id}')),
-                  ]),
-                ),
-              ]);
+                        const SizedBox(height: 24),
+                        Text('Requests', style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(height: 10),
+                        RequestFilterBar(
+                          value: _filter,
+                          requests: all,
+                          onChanged: (f) => setState(() => _filter = f),
+                        ),
+                        const SizedBox(height: 12),
+                        if (shown.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: Text(
+                                all.isEmpty
+                                    ? 'No requests yet. They will appear here the moment a student sends one.'
+                                    : 'Nothing in this list.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.grey.shade600),
+                              ),
+                            ),
+                          ),
+                        for (final r in shown)
+                          RequestTile(request: r, onTap: () => context.go('/dashboard/requests/${r.id}')),
+                      ],
+                    ),
+                  ),
+                ],
+              );
             },
           ),
         );

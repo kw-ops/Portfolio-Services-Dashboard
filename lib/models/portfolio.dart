@@ -6,26 +6,21 @@ class ServiceItem {
   final String description;
   final num? priceFrom;
 
-  const ServiceItem({
-    required this.id,
-    required this.name,
-    this.description = '',
-    this.priceFrom,
-  });
+  const ServiceItem({required this.id, required this.name, this.description = '', this.priceFrom});
 
   factory ServiceItem.fromMap(Map<String, dynamic> m) => ServiceItem(
-        id: m['id'] as String? ?? '',
-        name: m['name'] as String? ?? '',
-        description: m['description'] as String? ?? '',
-        priceFrom: m['priceFrom'] as num?,
-      );
+    id: m['id'] as String? ?? '',
+    name: m['name'] as String? ?? '',
+    description: m['description'] as String? ?? '',
+    priceFrom: m['priceFrom'] as num?,
+  );
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'priceFrom': priceFrom,
-      };
+    'id': id,
+    'name': name,
+    'description': description,
+    'priceFrom': priceFrom,
+  };
 }
 
 /// A service provider and its public portfolio (`providers/{id}`).
