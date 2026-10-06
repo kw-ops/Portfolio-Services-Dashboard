@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../app/session.dart';
 import '../data/api.dart';
+import '../widgets/common.dart';
 
 /// Login for the PSD admin and service providers.
 /// [stayHere] is used when the page is shown in place by RoleGate: after
@@ -99,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Icon(Icons.storefront, size: 40, color: Theme.of(context).colorScheme.primary),
+                        const Center(child: PsdLogo(size: 48)),
                         const SizedBox(height: 12),
                         Text(
                           'Portfolio Services Dashboard',

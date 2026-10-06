@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +13,21 @@ final _dateTime = DateFormat('d MMM yyyy, h:mm a');
 /// Phone-sized screen (below a typical tablet width).
 bool isCompact(BuildContext context) => MediaQuery.sizeOf(context).width < 600;
 String formatDateTime(DateTime? d) => d == null ? '—' : _dateTime.format(d);
+
+/// The PSD platform mark. Providers keep their own logos; this is PSD's.
+class PsdLogo extends StatelessWidget {
+  const PsdLogo({super.key, this.size = 40});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => SvgPicture.asset(
+    'assets/images/psd_logo.svg',
+    width: size,
+    height: size,
+    semanticsLabel: 'PSD logo',
+  );
+}
 
 /// Network image that still renders when the Storage bucket has no CORS
 /// config (falls back to an <img> element on web).

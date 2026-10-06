@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../widgets/common.dart';
+
 /// Root page. Students normally arrive straight on a portfolio link from
 /// Campus Stay, so this only explains where to go and offers staff sign-in.
 class LandingPage extends StatelessWidget {
@@ -18,7 +20,7 @@ class LandingPage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.storefront, size: 56, color: theme.colorScheme.primary),
+                const PsdLogo(size: 64),
                 const SizedBox(height: 16),
                 Text(
                   'Campus Stay Services',
